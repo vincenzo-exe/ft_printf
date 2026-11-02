@@ -1,4 +1,4 @@
-*This project has been created as part of the 42 curriculum by aahmamou*
+*This project has been created as part of the 42 curriculum by aahmamou.*
 
 # ft_printf
 
@@ -6,7 +6,7 @@
 
 The **ft_printf** project consists of recreating the standard C `printf()` function as a custom library named `libftprintf.a`.
 
-The goal is to understand variadic functions, format-string parsing, character output, number conversion, and return-value management.
+The goal is to understand variadic functions, format-string parsing, character output, number conversion, recursion, and return-value management.
 
 The mandatory part supports the following conversions:
 
@@ -19,7 +19,7 @@ The mandatory part supports the following conversions:
 - `%X` — print a hexadecimal number using uppercase letters.
 - `%%` — print a percent sign.
 
-The implementation uses small helper functions to handle output and conversions. It does not reproduce the original `printf()` buffer management.
+The implementation uses helper functions to handle output and conversions. It does not reproduce the original `printf()` buffer management.
 
 ## Instructions
 
@@ -80,14 +80,16 @@ cc -Wall -Wextra -Werror main.c -I. libftprintf.a -o test
 
 The implementation processes the format string sequentially, from left to right.
 
-1. Initialize a `va_list` to access the variable arguments.
+1. Initialize a `va_list` using `va_start()` to access the variable arguments.
 2. Read the format string one character at a time.
 3. When a conversion marker (`%`) is encountered, identify the following conversion character and dispatch it to the corresponding helper function.
 4. For ordinary characters, write the character directly.
-5. Accumulate the number of characters written by each helper.
-6. End the variadic argument processing and return the total character count.
+5. Retrieve the corresponding argument using `va_arg()`.
+6. Accumulate the number of characters successfully written by each helper.
+7. Call `va_end()` when argument processing is finished.
+8. Return the total number of characters written, or `-1` if an output error occurs.
 
-Each helper returns the number of characters it writes, allowing the main function to calculate the result without separately counting every output character.
+Each output helper returns the number of characters successfully written, or `-1` if an output operation fails. Errors are propagated through the helper functions to `ft_printf()`.
 
 ### Data Structures
 
@@ -97,13 +99,21 @@ It does not require a custom linked list, tree, or other complex data structure.
 
 ### Design Choices
 
-The implementation separates format parsing from output operations. `handle_conversion()` selects the appropriate helper, while the utility functions handle characters, strings, signed integers, unsigned integers, and hexadecimal values.
+The implementation separates format parsing from output operations.
 
-This separation keeps each function focused on a specific responsibility and makes individual conversions easier to understand, test, and maintain.
+- `ft_printf.c` handles the format string, retrieves arguments, and dispatches conversions.
+- `ft_printf_utils.c` contains character output, string output, unsigned decimal printing, and hexadecimal printing.
+- `ft_printf_nbr.c` handles signed integer printing using a private recursive helper.
+
+Recursive functions are used to print numbers from the most significant digit to the least significant digit.
+
+Signed integer printing uses a `long` variable to safely handle the magnitude of `INT_MIN` on the target platform.
+
+The project is organized so that no source file contains more than five functions. This keeps the implementation modular and each function focused on a specific responsibility.
 
 ## Resources
 
-- [`printf(3)` — Linux manual page](https://man7.org/linux/man-pages/man3/printf.3.html): reference for standard formatted output.
+- [`printf(3)` — Linux manual page](https://man7.org/linux/man-pages/man3/printf.3.html): reference for formatted output.
 - [`stdarg(3)` — Linux manual page](https://man7.org/linux/man-pages/man3/stdarg.3.html): reference for variadic argument handling.
 - [GNU C Library documentation](https://www.gnu.org/software/libc/manual/): additional reference for C library functions.
 - The official `ft_printf` subject.

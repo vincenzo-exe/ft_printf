@@ -6,19 +6,21 @@
 /*   By: aahmamou <aahmamou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/14 21:33:07 by aahmamou          #+#    #+#             */
-/*   Updated: 2026/09/14 21:33:08 by aahmamou         ###   ########.fr       */
+/*   Updated: 2026/11/02 22:34:41 by aahmamou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <unistd.h>
 #include "ft_printf.h"
 
 int	ft_putchar(char c)
 {
-	write(1, &c, 1);
+	if (write(1, &c, 1) != 1)
+		return (-1);
 	return (1);
 }
 
-int	ft_putstr(char *str)
+int	ft_putstr(const char *str)
 {
 	int	i;
 
@@ -27,52 +29,51 @@ int	ft_putstr(char *str)
 	i = 0;
 	while (str[i])
 	{
-		ft_putchar(str[i]);
+		if (ft_putchar(str[i]) == -1)
+			return (-1);
 		i++;
 	}
 	return (i);
 }
 
-int	ft_putnbr(int n)
-{
-	long	nb;
-	int		count;
-
-	nb = n;
-	count = 0;
-	if (nb < 0)
-	{
-		count += ft_putchar('-');
-		nb = -nb;
-	}
-	if (nb >= 10)
-		count += ft_putnbr(nb / 10);
-	count += ft_putchar((nb % 10) + '0');
-	return (count);
-}
-
 int	ft_putunbr(unsigned int n)
 {
 	int	count;
+	int	ret;
 
 	count = 0;
 	if (n >= 10)
-		count += ft_putunbr(n / 10);
-	count += ft_putchar((n % 10) + '0');
-	return (count);
+	{
+		ret = ft_putunbr(n / 10);
+		if (ret == -1)
+			return (-1);
+		count += ret;
+	}
+	ret = ft_putchar((n % 10) + '0');
+	if (ret == -1)
+		return (-1);
+	return (count + ret);
 }
 
 int	ft_puthex(unsigned long n, int uppercase)
 {
 	char	*base;
 	int		count;
+	int		ret;
 
 	base = "0123456789abcdef";
 	if (uppercase)
 		base = "0123456789ABCDEF";
 	count = 0;
 	if (n >= 16)
-		count += ft_puthex(n / 16, uppercase);
-	count += ft_putchar(base[n % 16]);
-	return (count);
+	{
+		ret = ft_puthex(n / 16, uppercase);
+		if (ret == -1)
+			return (-1);
+		count += ret;
+	}
+	ret = ft_putchar(base[n % 16]);
+	if (ret == -1)
+		return (-1);
+	return (count + ret);
 }
