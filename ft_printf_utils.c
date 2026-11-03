@@ -6,12 +6,11 @@
 /*   By: aahmamou <aahmamou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/14 21:33:07 by aahmamou          #+#    #+#             */
-/*   Updated: 2026/11/02 22:34:41 by aahmamou         ###   ########.fr       */
+/*   Updated: 2026/11/03 19:38:19 by aahmamou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <unistd.h>
-#include "ft_printf.h"
 
 int	ft_putchar(char c)
 {
