@@ -6,20 +6,20 @@
 /*   By: aahmamou <aahmamou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/14 21:32:51 by aahmamou          #+#    #+#             */
-/*   Updated: 2026/11/02 22:34:26 by aahmamou         ###   ########.fr       */
+/*   Updated: 2026/11/04 20:52:14 by aahmamou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdarg.h>
 #include "ft_printf.h"
 
-static int	handle_pointer(va_list args)
+static int	handle_pointer(va_list *args)
 {
 	void	*ptr;
 	int		count;
 	int		ret;
 
-	ptr = va_arg(args, void *);
+	ptr = va_arg(*args, void *);
 	if (!ptr)
 		return (ft_putstr("(nil)"));
 	count = ft_putstr("0x");
@@ -31,28 +31,28 @@ static int	handle_pointer(va_list args)
 	return (count + ret);
 }
 
-static int	handle_conversion(char c, va_list args)
+static int	handle_conversion(char c, va_list *args)
 {
 	if (c == 'c')
-		return (ft_putchar(va_arg(args, int)));
+		return (ft_putchar(va_arg(*args, int)));
 	if (c == 's')
-		return (ft_putstr(va_arg(args, char *)));
+		return (ft_putstr(va_arg(*args, char *)));
 	if (c == 'p')
 		return (handle_pointer(args));
 	if (c == 'd' || c == 'i')
-		return (ft_putnbr(va_arg(args, int)));
+		return (ft_putnbr(va_arg(*args, int)));
 	if (c == 'u')
-		return (ft_putunbr(va_arg(args, unsigned int)));
+		return (ft_putunbr(va_arg(*args, unsigned int)));
 	if (c == 'x')
-		return (ft_puthex(va_arg(args, unsigned int), 0));
+		return (ft_puthex(va_arg(*args, unsigned int), 0));
 	if (c == 'X')
-		return (ft_puthex(va_arg(args, unsigned int), 1));
+		return (ft_puthex(va_arg(*args, unsigned int), 1));
 	if (c == '%')
 		return (ft_putchar('%'));
 	return (0);
 }
 
-static int	process_format(const char *format, va_list args)
+static int	process_format(const char *format, va_list *args)
 {
 	int	i;
 	int	count;
@@ -84,7 +84,7 @@ int	ft_printf(const char *format, ...)
 	if (!format)
 		return (-1);
 	va_start(args, format);
-	count = process_format(format, args);
+	count = process_format(format, &args);
 	va_end(args);
 	return (count);
 }
